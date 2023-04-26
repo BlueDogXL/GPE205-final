@@ -1,0 +1,55 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+public class Health : MonoBehaviour
+{
+    public float currentHealth; // current health isn't useful to designers so we usually hide it in the inspector
+    public float maxHealth;
+    public int scoreOnDeath;
+    public Image image;
+    // Start is called before the first frame update
+    void Start()
+    {
+        currentHealth = maxHealth; // when we start we usually haven't taken damage so we can just set current health to max healths
+
+    }
+    void Update()
+    {
+        image.fillAmount = (currentHealth / maxHealth);
+    }
+    public void TakeDamage(float amount, Pawn source) // get a damage and responsibility from elsewhere
+    {
+        currentHealth = currentHealth - amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log(source.name + " did " + amount + " damage to " + gameObject.name);
+
+        if (currentHealth <= 0) // if we sucked too bad, we die
+        {
+            Die(source);
+        }
+    }
+    public void Heal(float amount, Pawn source)
+    {
+        currentHealth = currentHealth + amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log(source.name + " healed " + amount + " damage from itself");
+    }
+
+    public void Die(Pawn source)
+    {
+        Debug.Log(source.name + " destroyed " + gameObject.name);
+        if (source.controller != null)
+        {
+            source.controller.AddToScore(scoreOnDeath);
+        }
+        Pawn thisPawn = GetComponent<Pawn>();
+        thisPawn.controller.lives--;
+        if (thisPawn.controller.lives > 0)
+        {
+            GameManager.instance.RespawnPlayer(thisPawn.controller);
+        }
+        GameManager.instance.TryGameOver();
+        Destroy(gameObject); // you lost at magical girl protoype game, and everyone in the debug log knows you suck
+    }
+}
