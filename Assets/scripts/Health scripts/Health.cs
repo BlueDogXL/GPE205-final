@@ -16,7 +16,8 @@ public class Health : MonoBehaviour
     }
     void Update()
     {
-        image.fillAmount = (currentHealth / maxHealth);
+        // image.fillAmount = (currentHealth / maxHealth);
+        // image.fillAmount = (currentHealth / maxHealth);
     }
     public void TakeDamage(float amount, Pawn source) // get a damage and responsibility from elsewhere
     {
