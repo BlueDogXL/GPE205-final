@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1404503104012328446}
   - component: {fileID: 1078246954574448942}
   - component: {fileID: 408388673200423196}
+  - component: {fileID: 8286570755672969895}
   m_Layer: 0
   m_Name: Magical power bullet thing
   m_TagString: Untagged
@@ -95,9 +96,17 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3442603029838677864}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1078246954574448942
@@ -107,10 +116,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3442603029838677864}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -128,8 +148,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a8acc5ab92556341955e8f88e7930cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageDone: 0
+  damageDone: 20
   owner: {fileID: 0}
+--- !u!114 &8286570755672969895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3442603029838677864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7995100dfe90d4783aef75fda9d9be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  homingDelay: 0.3
+  canIHoming: 0
+  homingRateTimer: 0
+  homingSpeed: 100
+  target: {fileID: 0}
+  rb: {fileID: 0}
 --- !u!1 &8785560627133120778
 GameObject:
   m_ObjectHideFlags: 0

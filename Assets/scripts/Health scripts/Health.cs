@@ -45,10 +45,16 @@ public class Health : MonoBehaviour
             source.controller.AddToScore(scoreOnDeath);
         }
         Pawn thisPawn = GetComponent<Pawn>();
-        thisPawn.controller.lives--;
-        if (thisPawn.controller.lives > 0)
+        if (thisPawn != null) 
+        { 
+            thisPawn.controller.lives--;
+        }
+        if (thisPawn != null)
         {
-            GameManager.instance.RespawnPlayer(thisPawn.controller);
+            if (thisPawn.controller.lives > 0)
+            {
+                GameManager.instance.RespawnPlayer(thisPawn.controller);
+            }
         }
         GameManager.instance.TryGameOver();
         Destroy(gameObject); // you lost at magical girl protoype game, and everyone in the debug log knows you suck

@@ -9,6 +9,7 @@ public class DamageOnHit : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Collided with " + other.name);
         Health otherHealth = other.gameObject.GetComponent<Health>(); // get the other thing's health component
 
         if (otherHealth != null) // if it actually has one and we didn't hit a wall or something

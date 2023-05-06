@@ -79,10 +79,6 @@ public class PlayerController : Controller
         {
             GameManager.instance.SetPlayerOneScore(score);
         }
-        else if (GameManager.instance.players[1] == this)
-        {
-            GameManager.instance.SetPlayerTwoScore(score);
-        }
         else
         {
             Debug.LogError("some other idiot has a score of: " + score);

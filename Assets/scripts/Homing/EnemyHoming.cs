@@ -2,23 +2,58 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyHoming : MonoBehaviour
+public class EnemyHoming : HomingBullet
 {
     public float homingDelay;
+    public bool canIHoming;
+    public float homingRateTimer;
+    public float homingSpeed;
+    public GameObject target;
+    public Rigidbody rb;
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        // get player pawn
+        homingRateTimer = Time.time + homingDelay;
+        TargetPlayerOne();
+        // get player as target
     }
-
-    // Update is called once per frame
-    void HomeTowards(GameObject target)
+    public void Update()
     {
-        // wait homingDelay seconds
-        // for (number of homing times)
-        // {
-        //      rotate towards target
-        //      move forward slowly in the air, really draw it out so the player has enough time to magical girl attack you
-        // }
+        if (Time.time >= homingRateTimer)
+        {
+            canIHoming = true;
+        }
+        if (target != null)
+        {
+            if (canIHoming == true)
+            {
+                HomeTowards(target);
+            }
+        }
+    }
+    public void TargetPlayerOne()
+    {
+        // If the GameManager exists
+        if (GameManager.instance != null)
+        {
+            // And the array of players exists
+            if (GameManager.instance.players != null)
+            {
+                // And there are players in it
+                if (GameManager.instance.players.Count > 0 && GameManager.instance.players[0].pawn != null)
+                {
+                    //Then target the gameObject of the pawn of the first player controller in the list
+                    target = GameManager.instance.players[0].pawn.gameObject;
+                }
+            }
+        }
+    }
+    // Update is called once per frame
+    public override void HomeTowards(GameObject target)
+    {
+        Debug.Log("Homing towards player!");
+        // taking this code from the unity docs
+        var step = homingSpeed * Time.deltaTime; // calculate distance to move
+        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, step);
     }
 }

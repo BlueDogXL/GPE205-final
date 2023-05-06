@@ -12,10 +12,9 @@ public class GameManager : MonoBehaviour
     public GameObject playerPawnPrefab;
     public Transform playerSpawnTransform;
     public List<PlayerController> players;
-    //public List<AIController> enemies;
+    public List<EnemyCreatorController> enemies;
     public int numberOfEnemies;
     public GameObject[] aiPrefabs;
-    public GameObject mapGeneratorPrefab;
     // game states
     public GameObject TitleScreenStateObject;
     public GameObject MainMenuStateObject;
@@ -33,9 +32,7 @@ public class GameManager : MonoBehaviour
     public KeyCode gameOverWinKey;
     // text i guess
     public TextMeshProUGUI playerOneScore;
-    public TextMeshProUGUI playerOneLives;
-    public TextMeshProUGUI playerTwoScore;
-    public TextMeshProUGUI playerTwoLives;
+    public Image playerOneHealthBar;
     void Awake() // game manager used extreme speed and does this before start()
     {
         if (instance == null) // if there is no game manager already
@@ -49,39 +46,36 @@ public class GameManager : MonoBehaviour
         }
 
         players = new List<PlayerController>(); // list of players for player controllers to add themselves to
-        //enemies = new List<AIController>();
-    }
-    public void SpawnMap()
-    {
-        GameObject newMapGen = Instantiate(mapGeneratorPrefab, Vector3.zero, Quaternion.identity);
+        enemies = new List<EnemyCreatorController>();
     }
     public void SpawnPlayer()
     {
-        //PawnSpawnPoint[] possiblePlayerSpawns = FindObjectsOfType<PawnSpawnPoint>();
-        //int randomSpawn = Random.Range(0, possiblePlayerSpawns.Length);
-        //GameObject newPlayerObject = Instantiate(playerControllerPrefab, Vector3.zero, Quaternion.identity);
-        //GameObject newPawnObject = Instantiate(playerPawnPrefab, possiblePlayerSpawns[randomSpawn].transform.position, possiblePlayerSpawns[randomSpawn].transform.rotation);
-        //PlayerController newController = newPlayerObject.GetComponent<PlayerController>();
-        //Pawn newPawn = newPawnObject.GetComponent<Pawn>();
-        //newController.pawn = newPawn; // pretty much use the player prefabs to make a player
-        //newPawn.controller = newController;
-        //players.Add(newController);
+        PawnSpawnPoint[] possiblePlayerSpawns = FindObjectsOfType<PawnSpawnPoint>();
+        int randomSpawn = Random.Range(0, possiblePlayerSpawns.Length);
+        GameObject newPlayerObject = Instantiate(playerControllerPrefab, Vector3.zero, Quaternion.identity);
+        GameObject newPawnObject = Instantiate(playerPawnPrefab, possiblePlayerSpawns[randomSpawn].transform.position, possiblePlayerSpawns[randomSpawn].transform.rotation);
+        PlayerController newController = newPlayerObject.GetComponent<PlayerController>();
+        Pawn newPawn = newPawnObject.GetComponent<Pawn>();
+        newController.pawn = newPawn; // pretty much use the player prefabs to make a player
+        newPawn.controller = newController;
+        players.Add(newController);
     }
     public void SpawnEnemies()
     {
-        //AISpawnPoint[] possibleAISpawns = FindObjectsOfType<AISpawnPoint>();
+        AISpawnPoint[] possibleAISpawns = FindObjectsOfType<AISpawnPoint>();
 
-        //for (int i = 0; i <= numberOfEnemies; i++)
-        //{
-        //    int randomSpawn = Random.Range(0, possibleAISpawns.Length);
-        //    int randomPrefab = Random.Range(0, aiPrefabs.Length);
-        //    GameObject newAIObject = Instantiate(aiPrefabs[randomPrefab], possibleAISpawns[randomSpawn].transform.position, possibleAISpawns[randomSpawn].transform.rotation);
-        //    AIController newController = newAIObject.GetComponent<AIController>();
-        //    TankPawn newPawn = newAIObject.GetComponent<TankPawn>();
-        //    newController.pawn = newPawn;
-        //    newPawn.controller = newController;
-        //    enemies.Add(newController);
-        //}
+        for (int i = 0; i <= numberOfEnemies; i++)
+        {
+            int randomSpawn = Random.Range(0, possibleAISpawns.Length);
+            int randomPrefab = Random.Range(0, aiPrefabs.Length);
+            GameObject newAIObject = Instantiate(aiPrefabs[randomPrefab], possibleAISpawns[randomSpawn].transform.position, possibleAISpawns[randomSpawn].transform.rotation);
+            EnemyCreatorController newController = newAIObject.GetComponent<EnemyCreatorController>();
+            EnemyCreatorPawn newPawn = newAIObject.GetComponent<EnemyCreatorPawn>();
+            newController.pawn = newPawn;
+            newPawn.controller = newController;
+            enemies.Add(newController);
+            newPawn.shooter.shootPoint = possibleAISpawns[randomSpawn].transform;
+        }
     }
 
     public void RespawnPlayer(Controller oldController)
@@ -98,7 +92,7 @@ public class GameManager : MonoBehaviour
         DeactivateAllStates();
         ActivateTitleScreen();
         SetPlayerOneScore(0);
-        //SetPlayerOneLives(players[0].lives);
+
     }
 
     private void Update()
@@ -180,44 +174,32 @@ public class GameManager : MonoBehaviour
         // set em up
         GameplayStateObject.SetActive(true);
         //insert whatever else here
-        //players.Clear();
-        //enemies.Clear();
+        players.Clear();
+        enemies.Clear();
         //MapGenerator[] existingMap = FindObjectsOfType<MapGenerator>();
         //for (int i = 0; i < existingMap.Length;)
         //{
         //    Destroy(existingMap[i]);
         //}
         //SpawnMap();
-        //SpawnPlayer(); // do all that prefab stuff
-        //SpawnEnemies();
+        SpawnPlayer(); // do all that prefab stuff
+        SpawnEnemies();
 
     }
     public void TryGameOver()
     {
-        //bool isGameOver = true;
-        //for (int i = 0; i < players.Count; i++)
-        //{
-        //    if (players[i].lives > 0)
-        //    {
-        //        isGameOver = false;
-        //    }
-        //}
-        //if (isGameOver == true)
-        //{
-        //    ActivateGameOverScreen(false);
-        //}
-        //isGameOver = true;
-        //for (int i = 0; i < enemies.Count; i++)
-        //{
-        //    if (enemies[i].lives > 0)
-        //    {
-        //        isGameOver = false;
-        //    }
-        //}
-        //if (isGameOver == true)
-        //{
-        //    ActivateGameOverScreen(true);
-        //}
+        bool isGameOver = true;
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].lives > 0)
+            {
+                isGameOver = false;
+            }
+        }
+        if (isGameOver == true)
+        {
+            ActivateGameOverScreen(false);
+        }
     }
     public void ActivateGameOverScreen(bool victory)
     {
@@ -231,16 +213,8 @@ public class GameManager : MonoBehaviour
     {
         playerOneScore.text = "SCORE: " + score;
     }
-    public void SetPlayerOneLives(int lives)
+    public void SetPlayerOneLife(float health)
     {
-        playerOneLives.text = "LIVES: " + lives;
-    }
-    public void SetPlayerTwoScore(int score)
-    {
-        playerTwoScore.text = "SCORE: " + score;
-    }
-    public void SetPlayerTwoLives(int lives)
-    {
-        playerTwoLives.text = "LIVES: " + lives;
+        playerOneHealthBar.fillAmount = health;
     }
 }

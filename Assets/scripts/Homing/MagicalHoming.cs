@@ -5,52 +5,68 @@ using UnityEngine;
 public class MagicalHoming : HomingBullet
 {
     public float homingDelay;
+    public bool canIHoming;
+    public float homingRateTimer;
     public float homingSpeed;
     public GameObject target;
+    public Rigidbody rb;
     // Start is called before the first frame update
     public override void Start()
     {
+        homingRateTimer = Time.time + homingDelay;
         TargetNearestEnemy();
-        HomeTowards(target);
+    }
+
+    public void Update()
+    {
+        if (Time.time >= homingRateTimer)
+        {
+            canIHoming = true;
+        }
+        if (canIHoming == true && target != null)
+        {
+            HomeTowards(target);
+        }
     }
     protected void TargetNearestEnemy()
     {
-        // Get a list of all the enemies (pawns)
-        Pawn[] allEnemies = FindObjectsOfType<Pawn>();
+        // Get a list of all the enemies (stuff with MagicalTarget)
+        MagicalTarget[] allEnemies = FindObjectsOfType<MagicalTarget>();
 
         // Assume that the first enemy is closest
-        Pawn closestEnemy = allEnemies[0];
-        float closestEnemyDistance = Vector3.Distance(this.transform.position, closestEnemy.transform.position);
-
-        // Iterate through them one at a time
-        foreach (Pawn enemy in allEnemies)
+        if (allEnemies.Length > 0)
         {
-            // If this one is closer than the closest
-            if (Vector3.Distance(this.transform.position, enemy.transform.position) <= closestEnemyDistance)
-            {
-                // It is the closest
-                closestEnemy = enemy;
-                closestEnemyDistance = Vector3.Distance(this.transform.position, closestEnemy.transform.position);
-            }
-        }
+            MagicalTarget closestEnemy = allEnemies[0];
+            float closestEnemyDistance = Vector3.Distance(this.transform.position, closestEnemy.transform.position);
 
-        // Target the closest enemy
-        target = closestEnemy.gameObject;
+            // Iterate through them one at a time
+            foreach (MagicalTarget enemy in allEnemies)
+            {
+                // If this one is closer than the closest
+                if (Vector3.Distance(this.transform.position, enemy.transform.position) <= closestEnemyDistance)
+                {
+                    // It is the closest
+                    closestEnemy = enemy;
+                    closestEnemyDistance = Vector3.Distance(this.transform.position, closestEnemy.transform.position);
+                }
+            }
+
+            // Target the closest enemy
+            target = closestEnemy.gameObject;
+        }
+        else
+        {
+            Debug.Log("No targets!");
+        }
     }
 
     // Update is called once per frame
     public override void HomeTowards(GameObject target)
     {
         // wait homingDelay seconds
-        // launch towards enemy
 
-
-        // or maybe do some repeating to make a more fluid arc idk like
-        // wait homingDelay seconds
-        // for (number of homing times)
-        // {
-        //      rotate towards target
-        //      launch with less force
-        // }
+        // taking this code from the unity docs
+        var step = homingSpeed * Time.deltaTime; // calculate distance to move
+        transform.position = Vector3.MoveTowards(transform.position, target.transform.position, step);
     }
 }
